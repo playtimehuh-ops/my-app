@@ -10,7 +10,13 @@ import sys
 from pathlib import Path
 
 block_cipher = None
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+# NOTE: .spec files are exec()'d by PyInstaller, not imported as a normal
+# module - `__file__` is NOT defined in that context (this used to be a
+# bug here that broke the build with "NameError: name '__file__' is not
+# defined"). PyInstaller instead injects `SPECPATH`, the directory
+# containing this .spec file, into the exec namespace - that's the
+# correct way to find the project root from inside a spec file.
+PROJECT_ROOT = Path(SPECPATH).resolve().parent
 
 hidden_imports = [
     "pyttsx3.drivers",
